@@ -1,5 +1,7 @@
 # 🌴 Explore Karnataka
 
+🔗 **Live Demo:** [https://explore-karnataka-g95j-3qez68d9v-manoj-ps-projects-2b58f73f.vercel.app/](https://explore-karnataka-g95j-3qez68d9v-manoj-ps-projects-2b58f73f.vercel.app/)
+
 A responsive full-stack tourism website built with **HTML, CSS, JavaScript** (frontend) and **Node.js, Express, MongoDB** (backend) with JWT authentication.
 
 ## ✨ Features
