@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Trips — Explore Karnataka</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">🌴 Explore <span>Karnataka</span></a>
+      <button class="menu-toggle" id="menu-toggle">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="destinations.html">Destinations</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="saved.html" class="active">My Trips</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section style="padding-top: 120px;">
+    <div class="section-header">
+      <h2>My Saved Trips</h2>
+      <p>Your personal Karnataka wishlist — plan your next adventure</p>
+    </div>
+
+    <div id="saved-container" class="cards-grid" style="max-width:1200px;margin:0 auto;padding:0 5% 4rem;">
+      <!-- Saved destinations will load here -->
+    </div>
+
+    <div id="empty-state" style="text-align:center;padding:4rem 2rem;display:none;">
+      <div style="font-size:4rem;margin-bottom:1rem;">🗺️</div>
+      <h3 style="color:var(--green);margin-bottom:1rem;">No trips saved yet</h3>
+      <p style="color:var(--muted);margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto;">Start exploring destinations and click "Save to My Trips" to build your personal itinerary.</p>
+      <a href="destinations.html" class="btn">Explore Destinations</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Explore Karnataka — Crafted with ♥ for travelers</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+    // Load saved destinations
+    async function loadSaved() {
+      const token = localStorage.getItem('ek_token');
+      const user = JSON.parse(localStorage.getItem('ek_user') || 'null');
+      
+      if (!token || !user) {
+        alert('Please login to view your trips');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const container = document.getElementById('saved-container');
+      const emptyState = document.getElementById('empty-state');
+      
+      try {
+        // Try API first
+        const res = await fetch('/api/destinations/saved', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        let saved = data.saved || [];
+        
+        // Fallback to localStorage
+        if (saved.length === 0) {
+          saved = JSON.parse(localStorage.getItem('ek_saved') || '[]');
+        }
+        
+        if (saved.length === 0) {
+          container.style.display = 'none';
+          emptyState.style.display = 'block';
+          return;
+        }
+        
+        container.innerHTML = saved.map(item => {
+          const dest = window.DESTINATIONS[item.id];
+          const img = item.image || dest?.image || '';
+          const tag = dest?.tag || '';
+          return `
+            <div class="card">
+              <div class="card-img">
+                <img src="${img}" alt="${item.name}" loading="lazy">
+                <span class="badge">${tag}</span>
+              </div>
+              <div class="card-body">
+                <h3>${item.name}</h3>
+                <p>${dest?.subtitle || 'Saved destination'}</p>
+                <div style="display:flex;gap:.5rem;margin-top:1rem;">
+                  <a href="destination.html?id=${item.id}" class="card-link">View Details →</a>
+                  <button onclick="removeSaved('${item.id}')" style="margin-left:auto;background:none;border:none;color:#ef4444;cursor:pointer;font-size:.9rem;">Remove</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+      } catch (err) {
+        console.error(err);
+        // Use localStorage fallback
+        const saved = JSON.parse(localStorage.getItem('ek_saved') || '[]');
+        if (saved.length === 0) {
+          container.style.display = 'none';
+          emptyState.style.display = 'block';
+        }
+      }
+    }
+    
+    async function removeSaved(id) {
+      if (!confirm('Remove from My Trips?')) return;
+      
+      const token = localStorage.getItem('ek_token');
+      try {
+        await fetch(`/api/destinations/save/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      } catch(e) {}
+      
+      // Update localStorage
+      let saved = JSON.parse(localStorage.getItem('ek_saved') || '[]');
+      saved = saved.filter(d => d.id !== id);
+      localStorage.setItem('ek_saved', JSON.stringify(saved));
+      
+      loadSaved();
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadSaved);
+  </script>
+</body>
+</html>

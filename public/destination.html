@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Destination — Explore Karnataka</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">Explore<span>Karnataka</span></div>
+    <button class="menu-toggle" id="menu-toggle">☰</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="destinations.html">Destinations</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <section id="destination-detail" style="padding-top: 2rem;">
+    <a href="destinations.html" class="back-link">← Back to all destinations</a>
+    <div class="detail-container">
+      <div class="detail-hero">
+        <img id="detail-img" src="" alt="" />
+        <div class="detail-overlay">
+          <span class="card-tag" id="detail-tag"></span>
+          <h1 id="detail-title"></h1>
+          <p id="detail-subtitle"></p>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-content">
+          <h2>About</h2>
+          <p id="detail-desc"></p>
+          
+          <h3>Best Time to Visit</h3>
+          <p id="detail-time"></p>
+          
+          <h3>Top Experiences</h3>
+          <ul id="detail-experiences"></ul>
+          
+          <h3>How to Reach</h3>
+          <p id="detail-reach"></p>
+        </div>
+
+        <div class="detail-sidebar">
+          <div class="info-card">
+            <h3>📍 Location</h3>
+            <div class="map-container">
+              <iframe id="detail-map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <p id="detail-location" style="margin-top:0.75rem; font-size:0.9rem; color:#666;"></p>
+          </div>
+
+          <div class="info-card">
+            <h3>Quick Info</h3>
+            <div class="quick-info">
+              <div><strong>District:</strong> <span id="info-district"></span></div>
+              <div><strong>Altitude:</strong> <span id="info-altitude"></span></div>
+              <div><strong>Famous for:</strong> <span id="info-famous"></span></div>
+            </div>
+          </div>
+
+           <button id="save-btn" onclick="saveDestination(id)" class="btn" style="width:100%; text-align:center; margin-bottom:0.75rem; background:var(--gold); color:var(--green-dark); border:none; cursor:pointer;">
+             ♥ Save to My Trips
+           </button>
+           <a href="contact.html" class="btn" style="width:100%; text-align:center; background:transparent; border:2px solid var(--gold); color:var(--gold);">Plan Your Trip</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2026 <span>Explore Karnataka</span></footer>
+  <script src="js/script.js"></script>
+  <script>
+    // Load destination details
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id') || 'hampi';
+    const dest = window.DESTINATIONS?.[id];
+    
+    if (dest) {
+      document.title = `${dest.name} — Explore Karnataka`;
+      document.getElementById('detail-img').src = dest.image;
+      document.getElementById('detail-img').alt = dest.name;
+      document.getElementById('detail-title').textContent = dest.name;
+      document.getElementById('detail-subtitle').textContent = dest.subtitle;
+      document.getElementById('detail-tag').textContent = dest.tag;
+      document.getElementById('detail-desc').textContent = dest.description;
+      document.getElementById('detail-time').textContent = dest.bestTime;
+      document.getElementById('detail-reach').textContent = dest.reach;
+      document.getElementById('detail-location').textContent = dest.location;
+      document.getElementById('info-district').textContent = dest.district;
+      document.getElementById('info-altitude').textContent = dest.altitude;
+      document.getElementById('info-famous').textContent = dest.famous;
+      document.getElementById('detail-map').src = dest.mapEmbed;
+      
+      const expList = document.getElementById('detail-experiences');
+      expList.innerHTML = dest.experiences.map(e => `<li>${e}</li>`).join('');
+    }
+  </script>
+</body>
+</html>
