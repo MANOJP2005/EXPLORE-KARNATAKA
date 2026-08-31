@@ -7,8 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node server.js",
-    "dev:server": "nodemon server.js"
+    "start": "node server.cjs",
+    "dev:server": "nodemon server.cjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
