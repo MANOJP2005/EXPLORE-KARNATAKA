@@ -24,10 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ---------- MongoDB Connection ----------
 mongoose
-  .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/explore_karnataka', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/explore_karnataka')
   .then(() => console.log('✅ MongoDB connected'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 
@@ -223,7 +220,7 @@ app.delete('/api/destinations/save/:id', authMiddleware, async (req, res) => {
 });
 
 // ---------- Fallback to index.html ----------
-app.get('*', (req, res) => {
+app.get('*splat', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
